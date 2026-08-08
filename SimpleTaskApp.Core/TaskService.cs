@@ -1,7 +1,7 @@
 namespace SimpleTaskApp.Core;
 
-// Logica de negocio pura: reglas de validacion + orquestacion.
-// No sabe nada de SQLite, WinForms, ni de como se guardan los datos.
+// Pure business logic: validation rules + orchestration.
+// Knows nothing about SQLite, WinForms, or how data is stored.
 public class TaskService
 {
     private readonly ITaskRepository _repository;
@@ -14,10 +14,10 @@ public class TaskService
     public TaskItem AddTask(string title)
     {
         if (string.IsNullOrWhiteSpace(title))
-            throw new ArgumentException("El titulo no puede estar vacio.");
+            throw new ArgumentException("Title cannot be empty.");
 
         if (title.Length > 100)
-            throw new ArgumentException("El titulo no puede superar 100 caracteres.");
+            throw new ArgumentException("Title cannot exceed 100 characters.");
 
         var task = new TaskItem { Title = title.Trim(), IsDone = false };
         return _repository.Save(task);

@@ -5,49 +5,49 @@ using Xunit;
 
 namespace SimpleTaskApp.E2ETests;
 
-// TEST END-TO-END: NO llama codigo C# directamente. Abre el .exe REAL,
-// como lo abririas tu, y simula clics de un usuario real sobre la ventana.
-// Es el mas lento y el mas fragil (depende de que la UI no cambie), pero
-// es el UNICO que prueba que la app completa funciona de punta a punta,
-// tal como la usara la persona final.
+// END-TO-END TEST: does NOT call C# code directly. Opens the REAL .exe,
+// just like you would yourself, and simulates a real user's clicks on the
+// window. It's the slowest and most fragile (depends on the UI not
+// changing), but it's the ONLY one that proves the whole app works
+// end to end, exactly as the end user will use it.
 //
-// IMPORTANTE: antes de correr esto hay que compilar SimpleTaskApp.App
-// (dotnet build) y ajustar RutaExe abajo a la ruta del .exe generado.
+// IMPORTANT: before running this you need to build SimpleTaskApp.App
+// (dotnet build) and adjust ExePath below to the generated .exe's path.
 public class MainFormE2ETests : IDisposable
 {
-    private const string RutaExe = @"..\..\..\..\SimpleTaskApp.App\bin\Debug\net8.0-windows\SimpleTaskApp.App.exe";
+    private const string ExePath = @"..\..\..\..\SimpleTaskApp.App\bin\Debug\net8.0-windows\SimpleTaskApp.App.exe";
 
     private readonly Application _app;
     private readonly UIA3Automation _automation;
-    private readonly Window _ventana;
+    private readonly Window _window;
 
     public MainFormE2ETests()
     {
-        _app = Application.Launch(RutaExe);
+        _app = Application.Launch(ExePath);
         _automation = new UIA3Automation();
-        _ventana = _app.GetMainWindow(_automation);
+        _window = _app.GetMainWindow(_automation);
     }
 
     [Fact]
-    public void AgregarTarea_ConTituloValido_ApareceEnLaLista()
+    public void AddTask_WithValidTitle_AppearsInList()
     {
-        var txtTitle = _ventana.FindFirstDescendant(cf => cf.ByAutomationId("txtTitle")).AsTextBox();
-        var btnAdd = _ventana.FindFirstDescendant(cf => cf.ByAutomationId("btnAdd")).AsButton();
-        var lstTasks = _ventana.FindFirstDescendant(cf => cf.ByAutomationId("lstTasks")).AsListBox();
+        var txtTitle = _window.FindFirstDescendant(cf => cf.ByAutomationId("txtTitle")).AsTextBox();
+        var btnAdd = _window.FindFirstDescendant(cf => cf.ByAutomationId("btnAdd")).AsButton();
+        var lstTasks = _window.FindFirstDescendant(cf => cf.ByAutomationId("lstTasks")).AsListBox();
 
-        txtTitle.Enter("Comprar leche");
+        txtTitle.Enter("Buy milk");
         btnAdd.Click();
 
-        Assert.Contains(lstTasks.Items, item => item.Text == "Comprar leche");
+        Assert.Contains(lstTasks.Items, item => item.Text == "Buy milk");
     }
 
     [Fact]
-    public void AgregarTarea_ConTituloVacio_MuestraError()
+    public void AddTask_WithEmptyTitle_ShowsError()
     {
-        var btnAdd = _ventana.FindFirstDescendant(cf => cf.ByAutomationId("btnAdd")).AsButton();
-        var lblError = _ventana.FindFirstDescendant(cf => cf.ByAutomationId("lblError")).AsLabel();
+        var btnAdd = _window.FindFirstDescendant(cf => cf.ByAutomationId("btnAdd")).AsButton();
+        var lblError = _window.FindFirstDescendant(cf => cf.ByAutomationId("lblError")).AsLabel();
 
-        btnAdd.Click(); // sin escribir nada en txtTitle
+        btnAdd.Click(); // without typing anything into txtTitle
 
         Assert.False(string.IsNullOrEmpty(lblError.Text));
     }

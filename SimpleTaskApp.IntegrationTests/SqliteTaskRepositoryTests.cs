@@ -4,48 +4,48 @@ using Xunit;
 
 namespace SimpleTaskApp.IntegrationTests;
 
-// TEST DE INTEGRACION: prueba TaskService + SqliteTaskRepository JUNTOS,
-// contra una base de datos SQLite REAL (en memoria, pero real: SQL de verdad,
-// tabla de verdad, roundtrip de verdad). Aqui SI detectas errores de que
-// tu SQL este mal escrito o que el mapeo de columnas no coincida.
+// INTEGRATION TEST: tests TaskService + SqliteTaskRepository TOGETHER,
+// against a REAL SQLite database (in memory, but real: real SQL,
+// real table, real roundtrip). This IS where you catch errors from
+// badly written SQL or mismatched column mapping.
 public class SqliteTaskRepositoryTests : IDisposable
 {
     private readonly string _connectionString;
 
     public SqliteTaskRepositoryTests()
     {
-        // Cada test usa su propia BD SQLite en memoria, aislada de los demas
+        // Each test uses its own in-memory SQLite DB, isolated from the others
         _connectionString = $"Data Source=file:{Guid.NewGuid()}?mode=memory&cache=shared";
     }
 
     [Fact]
-    public void AddTask_GuardaYRecupera_DesdeSqliteReal()
+    public void AddTask_SavesAndRetrieves_FromRealSqlite()
     {
         var repository = new SqliteTaskRepository(_connectionString);
         var service = new TaskService(repository);
 
-        service.AddTask("Comprar leche");
-        service.AddTask("Revisar TradeSignal");
+        service.AddTask("Buy milk");
+        service.AddTask("Review TradeSignal");
 
-        var tareas = service.GetAll();
+        var tasks = service.GetAll();
 
-        Assert.Equal(2, tareas.Count);
-        Assert.Contains(tareas, t => t.Title == "Comprar leche");
-        Assert.Contains(tareas, t => t.Title == "Revisar TradeSignal");
-        // El Id lo asigna SQLite (AUTOINCREMENT) -- si esto es > 0, el
-        // roundtrip real con la BD funciono de principio a fin.
-        Assert.All(tareas, t => Assert.True(t.Id > 0));
+        Assert.Equal(2, tasks.Count);
+        Assert.Contains(tasks, t => t.Title == "Buy milk");
+        Assert.Contains(tasks, t => t.Title == "Review TradeSignal");
+        // The Id is assigned by SQLite (AUTOINCREMENT) -- if this is > 0, the
+        // real roundtrip with the DB worked end to end.
+        Assert.All(tasks, t => Assert.True(t.Id > 0));
     }
 
     [Fact]
-    public void GetAll_ConBaseDeDatosVacia_RetornaListaVacia()
+    public void GetAll_WithEmptyDatabase_ReturnsEmptyList()
     {
         var repository = new SqliteTaskRepository(_connectionString);
 
-        var tareas = repository.GetAll();
+        var tasks = repository.GetAll();
 
-        Assert.Empty(tareas);
+        Assert.Empty(tasks);
     }
 
-    public void Dispose() { /* la BD en memoria muere sola al cerrar la conexion */ }
+    public void Dispose() { /* the in-memory DB dies on its own when the connection closes */ }
 }

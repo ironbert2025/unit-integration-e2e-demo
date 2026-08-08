@@ -10,10 +10,10 @@ public partial class MainForm : Form
     {
         _taskService = taskService;
         InitializeComponent();
-        CargarTareas();
+        LoadTasks();
     }
 
-    private void CargarTareas()
+    private void LoadTasks()
     {
         lstTasks.Items.Clear();
         foreach (var t in _taskService.GetAll())
@@ -27,7 +27,7 @@ public partial class MainForm : Form
         {
             _taskService.AddTask(txtTitle.Text);
             txtTitle.Clear();
-            CargarTareas();
+            LoadTasks();
         }
         catch (ArgumentException ex)
         {

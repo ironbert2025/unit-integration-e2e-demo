@@ -1,6 +1,6 @@
 namespace SimpleTaskApp.Core;
 
-// Representa una tarea. Modelo simple, sin dependencias externas.
+// Represents a task. Simple model, no external dependencies.
 public class TaskItem
 {
     public int Id { get; set; }

@@ -9,8 +9,8 @@ static class Program
     {
         ApplicationConfiguration.Initialize();
 
-        // BD real en la carpeta del usuario. Para produccion cambiarias
-        // esto por tu cadena de conexion real (o inyeccion de dependencias).
+        // Real database in the user's folder. For production you'd replace
+        // this with your real connection string (or dependency injection).
         var dbPath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "SimpleTaskApp", "tasks.db");

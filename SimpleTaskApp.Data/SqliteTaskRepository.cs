@@ -3,9 +3,9 @@ using SimpleTaskApp.Core;
 
 namespace SimpleTaskApp.Data;
 
-// Implementacion REAL de ITaskRepository usando SQLite.
-// Esta es la pieza que un test unitario NUNCA toca (se mockea),
-// pero que un test de INTEGRACION si prueba de verdad.
+// REAL implementation of ITaskRepository using SQLite.
+// This is the piece a unit test NEVER touches (it gets mocked),
+// but an INTEGRATION test does exercise for real.
 public class SqliteTaskRepository : ITaskRepository
 {
     private readonly string _connectionString;
@@ -13,10 +13,10 @@ public class SqliteTaskRepository : ITaskRepository
     public SqliteTaskRepository(string connectionString)
     {
         _connectionString = connectionString;
-        CrearTablaSiNoExiste();
+        CreateTableIfNotExists();
     }
 
-    private void CrearTablaSiNoExiste()
+    private void CreateTableIfNotExists()
     {
         using var conn = new SqliteConnection(_connectionString);
         conn.Open();
